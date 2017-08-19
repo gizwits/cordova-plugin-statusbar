@@ -48,7 +48,7 @@ var StatusBar = {
         exec(null, null, "StatusBar", "overlaysWebView", [doOverlay]);
     },
 
-    statusBarHeight:function(){
+    statusBarHeight:function(success, error){
         exec(success, error, "StatusBar", "statusBarHeight", []);
     },
 
