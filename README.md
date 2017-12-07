@@ -65,6 +65,10 @@ Preferences
 
         <preference name="StatusBarStyle" value="lightcontent" />
 
+- __StatusBarDefaultScrollToTop__ (boolean, defaults to false). On iOS 7, allows the Cordova WebView to use default scroll-to-top behavior. Defaults to false so you can listen to the "statusTap" event (described below) and customize the behavior instead.
+
+        <preference name="StatusBarDefaultScrollToTop" value="false" />
+
 ### Android Quirks
 The Android 5+ guidelines specify using a different color for the statusbar than your main app color (unlike the uniform statusbar color of many iOS 7+ apps), so you may want to set the statusbar color at runtime instead via `StatusBar.backgroundColorByHexString` or `StatusBar.backgroundColorByName`. One way to do that would be:
 ```js
@@ -163,6 +167,7 @@ Supported Platforms
 -------------------
 
 - iOS
+- Android 6+ 
 - Windows Phone 7
 - Windows Phone 8
 - Windows Phone 8.1
@@ -179,6 +184,7 @@ Supported Platforms
 -------------------
 
 - iOS
+- Android 6+ 
 - Windows Phone 7
 - Windows Phone 8
 - Windows Phone 8.1
@@ -195,6 +201,7 @@ Supported Platforms
 -------------------
 
 - iOS
+- Android 6+ 
 - Windows Phone 7
 - Windows Phone 8
 - Windows Phone 8.1
@@ -211,6 +218,7 @@ Supported Platforms
 -------------------
 
 - iOS
+- Android 6+ 
 - Windows Phone 7
 - Windows Phone 8
 - Windows Phone 8.1

@@ -36,6 +36,7 @@ import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
+import java.util.Arrays;
 
 public class StatusBar extends CordovaPlugin {
     private static final String TAG = "StatusBar";
@@ -66,7 +67,12 @@ public class StatusBar extends CordovaPlugin {
                 window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
                 // Read 'StatusBarBackgroundColor' from config.xml, default is #000000.
-//                setStatusBarBackgroundColor(preferences.getString("StatusBarBackgroundColor", "#000000"));
+
+                setStatusBarBackgroundColor(preferences.getString("StatusBarBackgroundColor", "#000000"));
+
+                // Read 'StatusBarStyle' from config.xml, default is 'lightcontent'.
+                setStatusBarStyle(preferences.getString("StatusBarStyle", "lightcontent"));
+
             }
         });
     }
@@ -166,8 +172,50 @@ public class StatusBar extends CordovaPlugin {
             else return args.getBoolean(0) == false;
         }
 
-        if("statusBarHeight".equals(action)){
-            this.getStatusBarHeight(callbackContext);
+
+        if("statusBarHeight".equals(action)) {
+            getStatusBarHeight(callbackContext);
+            return true;
+        }
+
+        if ("styleDefault".equals(action)) {
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStatusBarStyle("default");
+                }
+            });
+            return true;
+        }
+
+        if ("styleLightContent".equals(action)) {
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStatusBarStyle("lightcontent");
+                }
+            });
+            return true;
+        }
+
+        if ("styleBlackTranslucent".equals(action)) {
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStatusBarStyle("blacktranslucent");
+                }
+            });
+            return true;
+        }
+
+        if ("styleBlackOpaque".equals(action)) {
+            this.cordova.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setStatusBarStyle("blackopaque");
+                }
+            });
+
             return true;
         }
 
@@ -211,11 +259,43 @@ public class StatusBar extends CordovaPlugin {
         }
     }
 
-    private void getStatusBarHeight(final CallbackContext callbackContext){
+
+    private void getStatusBarHeight(final CallbackContext callbackContext) {
         Resources resources = cordova.getActivity().getResources();
-        int resourceId = resources.getIdentifier("status_bar_height", "dimen","android");
+        int resourceId = resources.getIdentifier("status_bar_height", "dimen", "android");
         int height = resources.getDimensionPixelSize(resourceId);
         Log.v("dbw", "Status height:" + height);
         callbackContext.success(height);
+    }
+    
+    private void setStatusBarStyle(final String style) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (style != null && !style.isEmpty()) {
+                View decorView = cordova.getActivity().getWindow().getDecorView();
+                int uiOptions = decorView.getSystemUiVisibility();
+
+                String[] darkContentStyles = {
+                    "default",
+                };
+
+                String[] lightContentStyles = {
+                    "lightcontent",
+                    "blacktranslucent",
+                    "blackopaque",
+                };
+
+                if (Arrays.asList(darkContentStyles).contains(style.toLowerCase())) {
+                    decorView.setSystemUiVisibility(uiOptions | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    return;
+                }
+
+                if (Arrays.asList(lightContentStyles).contains(style.toLowerCase())) {
+                    decorView.setSystemUiVisibility(uiOptions & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                    return;
+                }
+
+                LOG.e(TAG, "Invalid style, must be either 'default', 'lightcontent' or the deprecated 'blacktranslucent' and 'blackopaque'");
+            }
+        }
     }
 }
